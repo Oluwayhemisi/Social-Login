@@ -9,9 +9,8 @@ import java.util.Map;
 
 import static com.example.UserLogin.oauth.util.Constants.AUTHORIZE_URL;
 
-/***
- * Builder class for LinkedIn OAuth 2.0 authorization URL.
- */
+
+ // Builder class for LinkedIn OAuth 2.0 authorization URL.
 
 public final class AuthorizationUrlBuilder {
 
@@ -27,25 +26,12 @@ public final class AuthorizationUrlBuilder {
         this.oauth20Service = oauth20Service;
     }
 
-    /**
-     * Setter for state
-     */
     public AuthorizationUrlBuilder state(final String state) {
         this.state = state;
         return this;
     }
 
-    /**
-     * Setter for additional params
-     */
-    public AuthorizationUrlBuilder additionalParams(final Map<String, String> additionalParams) {
-        this.additionalParams = additionalParams;
-        return this;
-    }
 
-    /**
-     * Builds the authorization URL
-     */
     public String build() throws UnsupportedEncodingException {
 
         String authoriztaionUrl = AUTHORIZE_URL
