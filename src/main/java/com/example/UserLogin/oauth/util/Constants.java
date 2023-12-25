@@ -25,10 +25,8 @@ public final class Constants {
     public static final String GRANT_TYPE = "grant_type";
 
     public static final String TOKEN_INTROSPECTION_URL = "https://www.linkedin.com/oauth/v2/introspectToken";
+    public static final String USERINFO_URL= "https://api.linkedin.com/v2/userinfo";
 
-    public static final int RESPONSE_CODE = 200;
-
-    public static final int PORT = 8000;
 
     public enum GrantType {
         CLIENT_CREDENTIALS("client_credentials"), AUTHORIZATION_CODE("authorization_code"), REFRESH_TOKEN("refresh_token");

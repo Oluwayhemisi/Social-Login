@@ -18,19 +18,13 @@ import static org.springframework.http.HttpMethod.*;
 @Configuration
 public class ConfigApp {
 
-//    @Bean
-//    public ModelMapper modelMapper(){
-//        return new ModelMapper();
-//    }
 
     @Bean
-    public RestTemplateBuilder restTemplateBuilder()
-
-    {
-        return
-
-                new RestTemplateBuilder();
+    public RestTemplateBuilder restTemplateBuilder() {
+        return new RestTemplateBuilder();
     }
+
+
 
     @Bean
     public RestTemplate restTemplate(final RestTemplateBuilder builder) {

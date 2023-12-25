@@ -3,7 +3,6 @@ package com.example.UserLogin.usersecurity;
 import com.example.UserLogin.usersecurity.jwt.JwtAuthenticationFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -26,13 +25,13 @@ public class ApplicationSecurityConfig {
         http.cors().and().csrf().disable()
                 .authorizeHttpRequests(authorize -> {
                     try {
-                        authorize.antMatchers("/auth/**", "/api/v1/auth/**", "/v2/api-docs/**", "/api/v1/confirm/**",
+                        authorize.antMatchers("/auth/**", "/api/v1/auth/**","/profile" ,"/linkedinlogin","/v2/api-docs/**", "/api/v1/confirm/**",
                                 "/swagger-ui/**", "/swagger-resources/**", "/swagger-ui-html", "/webjars/**").permitAll()
                                 .antMatchers("/customError").permitAll()
                                 .antMatchers("/access-denied").permitAll()
                                 .anyRequest().authenticated()
                                 .and()
-                                .oauth2Login(Customizer.withDefaults())
+//                                .oauth2Login(Customizer.withDefaults())
                                 .exceptionHandling().authenticationEntryPoint(unAuthorizedEntryPoint)
                                 .accessDeniedHandler(accessDeniedHandler())
                                 .and()

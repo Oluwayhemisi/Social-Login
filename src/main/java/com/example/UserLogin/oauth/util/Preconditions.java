@@ -15,9 +15,6 @@ public abstract class Preconditions {
      *
      * @throws IllegalArgumentException if the object is null
      */
-    public static void checkNotNull(final Object object, final String errorMsg) {
-        check(object != null, errorMsg);
-    }
 
     /**
      * Checks that a string is not null or empty

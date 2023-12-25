@@ -4,10 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 
-/**
- * POJO to encapsulate access token from 2/3-legged LinkedIn OAuth 2.0  flow.
- */
-
 @JsonIgnoreProperties(ignoreUnknown = true)
 public final class AccessToken {
 
@@ -21,7 +17,6 @@ public final class AccessToken {
     private String refreshToken;
 
     @JsonProperty(value = "refresh_token_expires_in")
-    //@Ignore
     private String refreshTokenExpiresIn;
 
     public AccessToken() {
