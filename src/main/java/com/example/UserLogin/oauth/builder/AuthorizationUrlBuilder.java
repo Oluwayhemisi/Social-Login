@@ -16,8 +16,6 @@ public class AuthorizationUrlBuilder {
     private final String scope;
     private final String apiSecret;
     private String state;
-    private Map<String, String> additionalParams;
-//    private final LinkedInOAuthService oauth20Service;
 
     public AuthorizationUrlBuilder(@Value("${clientId}") String apiKey,
                                    @Value("${redirectUri}") String redirectUri,
@@ -29,9 +27,6 @@ public class AuthorizationUrlBuilder {
         this.apiSecret = apiSecret;
     }
 
-//    public AuthorizationUrlBuilder(final LinkedInOAuthService oauth20Service) {
-//        this.oauth20Service = oauth20Service;
-//    }
 
     public AuthorizationUrlBuilder state(final String state) {
         this.state = state;
