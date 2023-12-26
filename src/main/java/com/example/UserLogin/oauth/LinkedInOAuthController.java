@@ -1,14 +1,15 @@
 package com.example.UserLogin.oauth;
 
 import com.example.UserLogin.exceptions.UserException;
-import com.example.UserLogin.oauth.builder.ScopeBuilder;
+import com.example.UserLogin.oauth.builder.LinkedInOAuthServiceBuilder;
 import com.example.UserLogin.oauth.pojo.AccessToken;
 import com.example.UserLogin.oauth.service.LinkedInOAuthService;
+
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.view.RedirectView;
 
@@ -17,39 +18,55 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 import java.util.Random;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
-import static com.example.UserLogin.oauth.util.Constants.*;
+
+import static com.example.UserLogin.oauth.util.Constants.REQUEST_TOKEN_URL;
+import static com.example.UserLogin.oauth.util.Constants.USERINFO_URL;
+
 @RestController
-public final class LinkedInOAuthController {
+@Slf4j
+public class LinkedInOAuthController {
 
 
-    @Autowired
-    private RestTemplate restTemplate;
-
-
-
-    //Define all inputs in the property file
+    private final RestTemplate restTemplate;
+    private final LinkedInOAuthService service;
     private Properties prop = new Properties();
     private String propFileName = "application.properties";
-    public static String token = null;
-    public String refresh_token = null;
-    public LinkedInOAuthService service;
 
-    private Logger logger = Logger.getLogger(LinkedInOAuthController.class.getName());
+    @Value("${clientId}")
+    private String clientId;
 
-    @RequestMapping(value = "/linkedinlogin")
-    public String oauth(@RequestParam(name = "code", required = false) final String code) throws Exception {
+    @Value("${clientSecret}")
+    private String clientSecret;
+
+    @Value("${scope}")
+    private String scope;
+
+    @Value("${redirectUri}")
+    private String redirectUri;
+
+    private String token;
+
+    private String refreshToken;
+
+    @Autowired
+    public LinkedInOAuthController(RestTemplate restTemplate, LinkedInOAuthService service) {
+        this.restTemplate = restTemplate;
+        this.service = service;
+    }
+
+
+    @RequestMapping("/linkedin/login")
+    public RedirectView oauth(@RequestParam(name = "code", required = false) final String code) throws Exception {
 
         loadProperty();
 
         // Construct the LinkedInOAuthService instance for use
-        service = new LinkedInOAuthService.LinkedInOAuthServiceBuilder()
-                .apiKey(prop.getProperty("clientId"))
-                .apiSecret(prop.getProperty("clientSecret"))
-                .defaultScope(new ScopeBuilder(prop.getProperty("scope").split(",")).build()) // replace with desired scope
-                .callback(prop.getProperty("redirectUri"))
+        LinkedInOAuthServiceBuilder linkedinOAuthServiceBuilder = LinkedInOAuthServiceBuilder.builder()
+                .apiKey(clientId)
+                .apiSecret(clientSecret)
+                .scope(scope) // replace with desired scope
+                .callback(redirectUri)
                 .build();
 
         final String secretState = "secret" + new Random().nextInt(999_999);
@@ -65,7 +82,7 @@ public final class LinkedInOAuthController {
             System.out.println(code+ "+++++++++++++++++++++++++++++++++");
 
 
-            logger.log(Level.INFO, "Authorization code not empty, trying to generate a 3-legged OAuth token.");
+            log.info( "Authorization code not empty, trying to generate a 3-legged OAuth token.");
 
             final AccessToken[] accessToken = {
                     new AccessToken()
@@ -76,17 +93,18 @@ public final class LinkedInOAuthController {
 
             prop.setProperty("token", accessToken[0].getAccessToken());
             token = accessToken[0].getAccessToken();
-            refresh_token = accessToken[0].getRefreshToken();
+            refreshToken = accessToken[0].getRefreshToken();
 
-            logger.log(Level.INFO, "Generated Access token and Refresh Token.");
+            log.info( "Generated Access token and Refresh Token.");
 
-             userInfo = getUserInfo(token);
+            userInfo = getUserInfo(token);
+            System.out.println(userInfo);
 
         } else {
             redirectView.setUrl(authorizationUrl);
 
         }
-        return userInfo;
+        return redirectView;
     }
 
 

@@ -1,6 +1,6 @@
 package com.example.UserLogin.oauth.util;
 
-public final class Constants {
+public class Constants {
 
     private Constants() {
         //private utility class constructor to forbid instantiation

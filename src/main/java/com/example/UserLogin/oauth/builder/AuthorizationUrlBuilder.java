@@ -1,6 +1,6 @@
 package com.example.UserLogin.oauth.builder;
 
-import com.example.UserLogin.oauth.service.LinkedInOAuthService;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -9,22 +9,29 @@ import java.util.Map;
 
 import static com.example.UserLogin.oauth.util.Constants.AUTHORIZE_URL;
 
+public class AuthorizationUrlBuilder {
 
- // Builder class for LinkedIn OAuth 2.0 authorization URL.
-
-public final class AuthorizationUrlBuilder {
-
+    private final String apiKey;
+    private final String redirectUri;
+    private final String scope;
+    private final String apiSecret;
     private String state;
     private Map<String, String> additionalParams;
-    private final LinkedInOAuthService oauth20Service;
+//    private final LinkedInOAuthService oauth20Service;
 
-    /**
-     * public constructor
-     * @param oauth20Service {@link LinkedInOAuthService}
-     */
-    public AuthorizationUrlBuilder(final LinkedInOAuthService oauth20Service) {
-        this.oauth20Service = oauth20Service;
+    public AuthorizationUrlBuilder(@Value("${clientId}") String apiKey,
+                                   @Value("${redirectUri}") String redirectUri,
+                                   @Value("${scope}") String scope,
+                                   @Value("${clientSecret}") String apiSecret) {
+        this.apiKey = apiKey;
+        this.redirectUri = redirectUri;
+        this.scope = String.join(",", scope);
+        this.apiSecret = apiSecret;
     }
+
+//    public AuthorizationUrlBuilder(final LinkedInOAuthService oauth20Service) {
+//        this.oauth20Service = oauth20Service;
+//    }
 
     public AuthorizationUrlBuilder state(final String state) {
         this.state = state;
@@ -35,14 +42,14 @@ public final class AuthorizationUrlBuilder {
     public String build() throws UnsupportedEncodingException {
 
         String authoriztaionUrl = AUTHORIZE_URL
-        + "?response_type=code&client_id="
-        + oauth20Service.getApiKey()
-        + "&redirect_uri="
-        + oauth20Service.getRedirectUri()
-        + "&state="
-        + state
-        + "&scope="
-        + URLEncoder.encode(oauth20Service.getScope(), String.valueOf(StandardCharsets.UTF_8));
+                + "?response_type=code&client_id="
+                + apiKey
+                + "&redirect_uri="
+                + redirectUri
+                + "&state="
+                + state
+                + "&scope="
+                + URLEncoder.encode(scope, String.valueOf(StandardCharsets.UTF_8));
         return authoriztaionUrl;
     }
 }

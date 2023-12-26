@@ -3,9 +3,8 @@ package com.example.UserLogin.oauth.pojo;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-
 @JsonIgnoreProperties(ignoreUnknown = true)
-public final class AccessToken {
+public class AccessToken {
 
     @JsonProperty(value = "access_token")
     private String accessToken;

@@ -2,64 +2,76 @@ package com.example.UserLogin.oauth.service;
 
 import com.example.UserLogin.oauth.builder.AuthorizationUrlBuilder;
 import com.example.UserLogin.oauth.pojo.AccessToken;
-import com.example.UserLogin.oauth.util.Preconditions;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.RestTemplate;
 
-import java.io.IOException;
 
 import static com.example.UserLogin.oauth.Constants.USER_AGENT_OAUTH_VALUE;
 import static com.example.UserLogin.oauth.util.Constants.*;
-
 /**
  * LinkedIn 3-Legged OAuth Service
  */
-@SuppressWarnings({"AvoidStarImport"})
-public final class LinkedInOAuthService {
+
+@Service
+public class LinkedInOAuthService implements OAuthService {
 
     private final String redirectUri;
     private final String apiKey;
     private final String apiSecret;
     private final String scope;
 
+    @Autowired
+    private  RestTemplate restTemplate;
 
-    private LinkedInOAuthService(final LinkedInOAuthServiceBuilder oauthServiceBuilder) {
-        this.redirectUri = oauthServiceBuilder.redirectUri;
-        this.apiKey = oauthServiceBuilder.apiKey;
-        this.apiSecret = oauthServiceBuilder.apiSecret;
-        this.scope = oauthServiceBuilder.scope;
-
+    @Autowired
+    public LinkedInOAuthService(
+            @Value("${redirectUri}") String redirectUri,
+            @Value("${clientId}") String apiKey,
+            @Value("${clientSecret}") String apiSecret,
+            @Value("${scope}") String scope
+            ) {
+        this.redirectUri = redirectUri;
+        this.apiKey = apiKey;
+        this.apiSecret = apiSecret;
+        this.scope = scope;
     }
 
+    @Override
     public String getRedirectUri() {
         return redirectUri;
     }
 
+    @Override
     public String getApiKey() {
         return apiKey;
     }
 
+    @Override
     public String getApiSecret() {
         return apiSecret;
     }
 
+    @Override
     public String getScope() {
         return scope;
     }
 
+    @Override
     public AuthorizationUrlBuilder createAuthorizationUrlBuilder() {
-        return new AuthorizationUrlBuilder(this);
+        return new AuthorizationUrlBuilder(getApiKey(), getRedirectUri(), getScope(),getApiSecret());
     }
-    public HttpEntity getAccessToken3Legged(final String code) {
+
+    @Override
+    public HttpEntity getAccessToken3Legged(String code) {
 
         MultiValueMap<String, String> parameters = new LinkedMultiValueMap<String, String>();
         parameters.add(GRANT_TYPE, GrantType.AUTHORIZATION_CODE.getGrantType());
@@ -74,54 +86,9 @@ public final class LinkedInOAuthService {
         return request;
     }
 
-    public AccessToken convertJsonTokenToPojo(final String accessToken) throws IOException {
+    @Override
+    public AccessToken convertJsonTokenToPojo(String accessToken) throws JsonProcessingException {
         return new ObjectMapper().readValue(accessToken, AccessToken.class);
     }
-
-
-    public static final class LinkedInOAuthServiceBuilder {
-        private String redirectUri;
-        private String apiKey;
-        private String apiSecret;
-        private String scope;
-
-
-        public LinkedInOAuthServiceBuilder apiKey(final String apiKey) {
-            Preconditions.checkEmptyString(apiKey, "Invalid Api key");
-            this.apiKey = apiKey;
-            return this;
-        }
-
-        public LinkedInOAuthServiceBuilder apiSecret(final String apiSecret) {
-            Preconditions.checkEmptyString(apiSecret, "Invalid Api secret");
-            this.apiSecret = apiSecret;
-            return this;
-        }
-
-        public LinkedInOAuthServiceBuilder callback(final String callback) {
-            this.redirectUri = callback;
-            return this;
-        }
-
-        private LinkedInOAuthServiceBuilder setScope(final String scope) {
-            Preconditions.checkEmptyString(scope, "Invalid OAuth scope");
-            this.scope = scope;
-            return this;
-        }
-
-        public LinkedInOAuthServiceBuilder defaultScope(final String scope) {
-            return setScope(scope);
-        }
-
-        public LinkedInOAuthService build() {
-
-            LinkedInOAuthService baseService = new LinkedInOAuthService(this);
-            return baseService;
-        }
-    }
-
-
-
-
 
 }
