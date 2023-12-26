@@ -99,12 +99,19 @@ public class LinkedInOAuthController {
 
             userInfo = getUserInfo(token);
             System.out.println(userInfo);
+            redirectView.setUrl("/");
 
         } else {
             redirectView.setUrl(authorizationUrl);
 
         }
         return redirectView;
+    }
+
+
+    @GetMapping("/")
+    public String message(){
+      return   "Signed in";
     }
 
 

@@ -25,7 +25,7 @@ public class ApplicationSecurityConfig {
         http.cors().and().csrf().disable()
                 .authorizeHttpRequests(authorize -> {
                     try {
-                        authorize.antMatchers("/auth/**", "/api/v1/auth/**","/profile" ,"/linkedin/login/**","/linkedin","/login/**").permitAll()
+                        authorize.antMatchers("/auth/**", "/api/v1/auth/**","/profile" ,"/linkedin/login/**","/linkedin","/login/**", "/").permitAll()
                                 .antMatchers("/customError").permitAll()
                                 .antMatchers("/access-denied").permitAll()
                                 .anyRequest().authenticated()
