@@ -65,7 +65,7 @@ public class LinkedInOAuthController {
         LinkedInOAuthServiceBuilder linkedinOAuthServiceBuilder = LinkedInOAuthServiceBuilder.builder()
                 .apiKey(clientId)
                 .apiSecret(clientSecret)
-                .scope(scope) // replace with desired scope
+                .scope(scope)
                 .callback(redirectUri)
                 .build();
 
@@ -73,14 +73,12 @@ public class LinkedInOAuthController {
         final String authorizationUrl = service.createAuthorizationUrlBuilder()
                 .state(secretState)
                 .build();
-        System.out.println(authorizationUrl+ "================================");
+        log.info(authorizationUrl);
 
         RedirectView redirectView = new RedirectView();
 
         String userInfo = "";
         if (code != null && !code.isEmpty()) {
-            System.out.println(code+ "+++++++++++++++++++++++++++++++++");
-
 
             log.info( "Authorization code not empty, trying to generate a 3-legged OAuth token.");
 

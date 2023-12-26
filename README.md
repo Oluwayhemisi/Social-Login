@@ -19,7 +19,7 @@ The application uses the following development tools:
 
 * Ensure that you have an application registered in [LinkedIn Developer Portal](https://developer.linkedin.com/).
 Once you have your application, note down the Client ID and Client Secret
-* Add <http://localhost:8181/linkedinlogin> to the Authorized Redirect URLs under the **Authentication** section
+* Add <http://localhost:8181/linkedin/login> to the Authorized Redirect URLs under the **Authentication** section
 * Configure the application build by installing MAVEN using [Installing Apache Maven](https://maven.apache.org/install.html)
 
 
